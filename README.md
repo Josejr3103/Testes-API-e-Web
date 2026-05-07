@@ -95,10 +95,23 @@ newman run Teste-API/petstore.collection.json -e Teste-API/petstore.environment.
 
 ### Cobertura dos testes de API
 
+Os testes cobrem todos os endpoints documentados no Swagger da Petstore API, validando status HTTP, tempo de resposta e modelo de resposta para os módulos **pet**, **store** e **user**.
+
+| Módulo | Endpoints cobertos |
+|--------|-------------------|
+| pet | POST /pet, PUT /pet, GET /pet/findByStatus, GET /pet/findByTags, GET /pet/{petId}, POST /pet/{petId}, POST /pet/{petId}/uploadImage, DELETE /pet/{petId} |
+| store | GET /store/inventory, POST /store/order, GET /store/order/{orderId}, DELETE /store/order/{orderId} |
+| user | POST /user, POST /user/createWithArray, POST /user/createWithList, GET /user/login, GET /user/logout, GET /user/{username}, PUT /user/{username}, DELETE /user/{username} |
+
+Dois casos estão marcados como **known bug** — a API retorna 200 em situações onde deveria retornar erro — e são mantidos no suite para rastreamento do comportamento atual.
+
+---
+
 - `iterations`: número de vezes que a coleção é executada no Collection Runner.
 - `requests`: cada requisição enviada durante a execução da coleção.
 - `prerequest-scripts`: scripts executados antes de cada requisição para preparar variáveis ou configurar dados.
 - `test-scripts`: scripts executados após cada requisição para validar respostas, status e conteúdo.
+- `assertions`: quantos testes (`pm.test(...)`) individuais foram executados no total.
 
 ## Execução Web
 
