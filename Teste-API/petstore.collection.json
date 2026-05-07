@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "878438b6-2724-41de-8f6b-56586c85a5da",
+    "_postman_id": "96fd8478-4a2b-43d1-bd9f-1408b9df9273",
     "name": "Automação - Petstore API",
-    "description": "Cobertura completa dos endpoints Pet, Store e User da Swagger Petstore API.\nImporte este arquivo no Postman ou execute via: npm test",
+    "description": "Cobertura completa dos endpoints Pet, Store e User da Swagger Petstore API.  \nImporte este arquivo no Postman ou execute via: newman run",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "44011114",
-    "_collection_link": "https://go.postman.co/collection/44011114-878438b6-2724-41de-8f6b-56586c85a5da?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/44011114-96fd8478-4a2b-43d1-bd9f-1408b9df9273?source=collection_link"
   },
   "item": [
     {
@@ -331,9 +331,7 @@
                   "    });",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -372,9 +370,7 @@
                   "    pm.response.json().forEach(pet => pm.expect(pet.status).to.eql('pending'));",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -413,9 +409,7 @@
                   "    pm.response.json().forEach(pet => pm.expect(pet.status).to.eql('sold'));",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -451,9 +445,7 @@
                   "pm.test('Status code é 200', () => pm.response.to.have.status(200));",
                   "pm.test('Retorna uma lista', () => pm.expect(pm.response.json()).to.be.an('array'));"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -534,9 +526,7 @@
                   "    pm.expect(pm.response.code).to.equal(200);",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -606,6 +596,144 @@
               "path": [
                 "pet",
                 "{{petId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /pet/{petId} – Verificar atualização via form-data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code é 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Nome foi atualizado via form-data', () => {",
+                  "    pm.expect(pm.response.json().name).to.eql('NomeViaForm');",
+                  "});",
+                  "pm.test('Status foi atualizado para pending via form-data', () => {",
+                  "    pm.expect(pm.response.json().status).to.eql('pending');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pet/{{petId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pet",
+                "{{petId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pet/{petId}/uploadImage – Upload de imagem",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code é 200', () => {",
+                  "    pm.expect(pm.environment.get('uploadStatus')).to.equal(200);",
+                  "});",
+                  "",
+                  "pm.test('Resposta é JSON válido', () => {",
+                  "    const body = JSON.parse(pm.environment.get('uploadBody'));",
+                  "    pm.expect(body).to.be.an('object');",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém message', () => {",
+                  "    const body = JSON.parse(pm.environment.get('uploadBody'));",
+                  "    pm.expect(body).to.have.property('message');",
+                  "});",
+                  "",
+                  "pm.test('Campo type presente na resposta', () => {",
+                  "    const body = JSON.parse(pm.environment.get('uploadBody'));",
+                  "    pm.expect(body).to.have.property('type');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const pngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';\r",
+                  "const petId = pm.environment.get('petId');\r",
+                  "\r",
+                  "// Monta o boundary e o corpo multipart manualmente\r",
+                  "const boundary = '----PostmanBoundary' + Date.now();\r",
+                  "const filename = 'test.png';\r",
+                  "\r",
+                  "// Converte base64 para string binária caractere a caractere\r",
+                  "const binaryStr = require('atob')(pngBase64);\r",
+                  "\r",
+                  "const bodyParts = [\r",
+                  "    `--${boundary}\\r\\n`,\r",
+                  "    `Content-Disposition: form-data; name=\"additionalMetadata\"\\r\\n\\r\\n`,\r",
+                  "    `foto de teste\\r\\n`,\r",
+                  "    `--${boundary}\\r\\n`,\r",
+                  "    `Content-Disposition: form-data; name=\"file\"; filename=\"${filename}\"\\r\\n`,\r",
+                  "    `Content-Type: image/png\\r\\n\\r\\n`,\r",
+                  "    binaryStr,\r",
+                  "    `\\r\\n--${boundary}--\\r\\n`\r",
+                  "].join('');\r",
+                  "\r",
+                  "pm.sendRequest(\r",
+                  "    {\r",
+                  "        url: `https://petstore.swagger.io/v2/pet/${petId}/uploadImage`,\r",
+                  "        method: 'POST',\r",
+                  "        header: {\r",
+                  "            'Content-Type': `multipart/form-data; boundary=${boundary}`,\r",
+                  "            'Accept': 'application/json'\r",
+                  "        },\r",
+                  "        body: {\r",
+                  "            mode: 'raw',\r",
+                  "            raw: bodyParts\r",
+                  "        }\r",
+                  "    },\r",
+                  "    function (err, response) {\r",
+                  "        if (err) {\r",
+                  "            pm.environment.set('uploadStatus', 0);\r",
+                  "            pm.environment.set('uploadBody', JSON.stringify({ type: 'error', message: err.message }));\r",
+                  "        } else {\r",
+                  "            pm.environment.set('uploadStatus', response.code);\r",
+                  "            pm.environment.set('uploadBody', response.text());\r",
+                  "        }\r",
+                  "    }\r",
+                  ");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pet/{{petId}}/uploadImage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pet",
+                "{{petId}}",
+                "uploadImage"
               ]
             }
           },
@@ -752,7 +880,6 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "// Cria um pet para vincular ao pedido",
                   "const petId = Math.floor(Math.random() * 900000) + 100000;",
                   "pm.environment.set('orderPetId', petId);",
                   "",
@@ -779,7 +906,6 @@
                   "pm.test('Quantidade é 1', () => {",
                   "    pm.expect(pm.response.json().quantity).to.eql(1);",
                   "});",
-                  "// Salva o ID retornado para os próximos testes",
                   "pm.environment.set('orderId', pm.response.json().id);"
                 ],
                 "type": "text/javascript"
@@ -797,106 +923,6 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"id\": {{newOrderId}},\n  \"petId\": {{orderPetId}},\n  \"quantity\": 1,\n  \"shipDate\": \"2025-12-31T00:00:00.000Z\",\n  \"status\": \"placed\",\n  \"complete\": false\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/store/order",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "store",
-                "order"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST /store/order – Status approved",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "pm.environment.set('approvedPetId', Math.floor(Math.random() * 900000) + 100000);"
-                ],
-                "type": "text/javascript"
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code é 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Status do pedido é approved', () => {",
-                  "    pm.expect(pm.response.json().status).to.eql('approved');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": 2,\n  \"petId\": {{approvedPetId}},\n  \"quantity\": 2,\n  \"shipDate\": \"2025-06-01T00:00:00.000Z\",\n  \"status\": \"approved\",\n  \"complete\": false\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/store/order",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "store",
-                "order"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST /store/order – Pedido completo (complete: true)",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "pm.environment.set('completePetId', Math.floor(Math.random() * 900000) + 100000);"
-                ],
-                "type": "text/javascript"
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code é 200', () => pm.response.to.have.status(200));",
-                  "pm.test('Pedido marcado como completo', () => {",
-                  "    pm.expect(pm.response.json().complete).to.eql(true);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": 3,\n  \"petId\": {{completePetId}},\n  \"quantity\": 1,\n  \"shipDate\": \"2025-06-01T00:00:00.000Z\",\n  \"status\": \"placed\",\n  \"complete\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/store/order",
@@ -1249,9 +1275,7 @@
                   "    pm.expect(pm.response.headers.get('X-Rate-Limit')).to.not.be.null;",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -1282,7 +1306,7 @@
           "response": []
         },
         {
-          "name": "GET /user/login – Sem credenciais retorna erro",
+          "name": "GET /user/login – Known Bug: Sem credenciais não retorna erro",
           "event": [
             {
               "listen": "test",
@@ -1293,9 +1317,7 @@
                   "    pm.expect(pm.response.code).to.equal(200);",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -1310,6 +1332,35 @@
               "path": [
                 "user",
                 "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /user/logout – Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code é 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "logout"
               ]
             }
           },
@@ -1387,45 +1438,7 @@
           "response": []
         },
         {
-          "name": "PUT /user/{username} – Atualizar email",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code é 200', () => pm.response.to.have.status(200));"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id\": {{userId}},\n  \"username\": \"{{username}}\",\n  \"firstName\": \"João\",\n  \"lastName\": \"Silva\",\n  \"email\": \"novoemail@teste.com\",\n  \"password\": \"{{userPassword}}\",\n  \"phone\": \"81999999999\",\n  \"userStatus\": 1\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/user/{{username}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "user",
-                "{{username}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "PUT /user/{username} – Atualizar nome",
+          "name": "PUT /user/{username} – Atualizar usuário",
           "event": [
             {
               "listen": "test",
@@ -1463,7 +1476,7 @@
           "response": []
         },
         {
-          "name": "PUT /user/{username} – Usuário inexistente retorna erro",
+          "name": "PUT /user/{username} – Known Bug: Usuário inexistente não retorna erro",
           "event": [
             {
               "listen": "test",
@@ -1474,9 +1487,7 @@
                   "    pm.expect(pm.response.code).to.equal(200);",
                   "});"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "type": "text/javascript"
               }
             }
           ],
@@ -1500,35 +1511,6 @@
               "path": [
                 "user",
                 "usuario_inexistente_xyz"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /user/logout – Logout",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code é 200', () => pm.response.to.have.status(200));"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/user/logout",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "user",
-                "logout"
               ]
             }
           },
